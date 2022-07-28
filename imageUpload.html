@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- CSS only -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: .8rem .5rem;
+            border-radius: 3px;
+            outline: none;
+            border: 1px solid #eee;
+        }
+
+        select {
+            display: block;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+
+        button,
+        a {
+            padding: .6rem .9rem;
+            font-weight: bold;
+            color: white;
+            outline: none;
+            border: 1px solid blue;
+            border-radius: 8px;
+            margin-top: 1rem;
+            background-color: rgb(78, 78, 209);
+            text-decoration: none;
+        }
+
+        .viewStd a {
+            margin-top: 100px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #btnSubmit a {
+            margin-top: 20px;
+        }
+
+        #myDiv {
+            margin-top: 4px;
+            height: 50px;
+            background-color: azure;
+        }
+
+        #myDiv h1 {
+            color: green;
+            font-weight: 400;
+        }
+    </style>
+
+</head>
+
+<body>
+    <button class="ms-3 mt-5 me-3 d-flex justify-content-center" onclick="window.location.href='viewStudent.html'">Back
+        to List</button>
+    <div class="container">
+        <form id="myForm">
+            <div class="mb-3 mt-3 my-4">
+                <label for="file" class="form-label">Upload Image</label>
+                <input type="file" class="form-control my-3" id="file" aria-describedby="helpId">
+                <small id="helpId" class="collapse text-danger"></small>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <script>
+        const myForm = document.getElementById('myForm');
+        const inputFile = document.getElementById('file').files;
+        myForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            let myFiles = document.getElementById('file').files[0];
+            var validExt = ['jpg', 'jpeg', 'png'];
+            validation();
+            function validation() {
+                if (myFiles.name != '') {
+                    const fileName = myFiles.name.toLowerCase();
+                    const extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+                    // console.log(extension);
+                    var result = validExt.includes(extension);
+                    // console.log(result);
+                    if (result == false) {
+                        alert('Please upload valid image');
+                        return false;
+                    }
+                    else {
+                        if ((parseFloat(myFiles.size) / 1024) > 1024) {
+                            alert('Please upload image less than 1MB');
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    console.log('No image selected');
+                    return false;
+                }
+                // return true;
+                console.log('success');
+                let formData = new FormData(myForm);
+                let pathName = new URLSearchParams(location.search)
+                let id = pathName.get("id");
+                console.log(myFiles.files);
+                    formData.append("file",myFiles);
+                    fetch(`https://api.logichubss.com/api/students/image?id=${id}`,{
+                        method:"POST",
+                        body:formData
+                    }).then(res=>res.json())
+                    .then(res=>{
+                        console.log('Image Uploaded Successfully');
+                        window.location.href = 'viewStudent.html';
+                    })
+                    .catch(err=>{
+                        console.log(err);
+                    })
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>
